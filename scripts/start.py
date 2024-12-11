@@ -9,13 +9,14 @@ from dicomwatch.processor import Processor
 from dicomwatch.sender import Sender
 
 logger = logging.getLogger('main')
-logging.basicConfig(level=logging.INFO)
+FORMAT = '[%(asctime)s][%(levelname)s][%(threadName)s]:%(message)s'
+logging.basicConfig(level=logging.DEBUG, format=FORMAT)
 
 def main():
     parser = ArgumentParser()
-    parser.add_argument('--hostname')
-    parser.add_argument('--port', type=int)
-    parser.add_argument('--ae-title', default='ANY-SCP')
+    parser.add_argument('--hostname', default='localhost')
+    parser.add_argument('--port', type=int, default=8104)
+    parser.add_argument('--ae-title', default='MADRCCENTRAL')
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('--folder', type=Path, default='/tmp/dicomwatch')
     args = parser.parse_args()
@@ -30,6 +31,8 @@ def main():
 
     if args.verbose:
         logging.getLogger('processor').setLevel(logging.DEBUG)
+        logging.getLogger('consumer').setLevel(logging.DEBUG)
+        logging.getLogger('sender').setLevel(logging.DEBUG)
    
     consumer.forever()
 
