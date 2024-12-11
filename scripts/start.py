@@ -10,7 +10,7 @@ from dicomwatch.sender import Sender
 
 logger = logging.getLogger('main')
 FORMAT = '[%(asctime)s][%(levelname)s][%(threadName)s]:%(message)s'
-logging.basicConfig(level=logging.DEBUG, format=FORMAT)
+logging.basicConfig(level=logging.INFO, format=FORMAT)
 
 def main():
     parser = ArgumentParser()
