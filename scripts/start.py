@@ -6,7 +6,7 @@ from pathlib import Path
 from argparse import ArgumentParser
 from dicomwatch.consumer import Consumer
 from dicomwatch.processor import Processor
-from dicomwatch.sender import Sender
+from dicomwatch.dicom.sender import Sender
 
 logger = logging.getLogger('main')
 FORMAT = '[%(asctime)s][%(levelname)s][%(threadName)s]:%(message)s'
