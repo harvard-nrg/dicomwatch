@@ -1,4 +1,4 @@
-#!/usr/bin/env python3 -u
+#!/usr/bin/env python3
 
 import logging
 from pubsub import pub
@@ -17,16 +17,19 @@ def main():
     parser.add_argument('--hostname', default='localhost')
     parser.add_argument('--port', type=int, default=8104)
     parser.add_argument('--ae-title', default='MADRCCENTRAL')
+    parser.add_argument('--study-description', type=str, default='MADRC')
     parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('--folder', type=Path, default='/tmp/dicomwatch')
     args = parser.parse_args()
 
     consumer = Consumer(args.folder)
-    processor = Processor()
     sender = Sender(
         hostname=args.hostname,
         port=args.port,
         ae_title=args.ae_title
+    )
+    processor = Processor(
+        study_description=args.study_description
     )
 
     if args.verbose:
