@@ -6,6 +6,7 @@ from pubsub import pub
 from pathlib import Path
 from pynetdicom import AE
 from pydicom.errors import InvalidDicomError
+from dicomwatch.dicom.sender import Sender
 from concurrent.futures import ThreadPoolExecutor
 
 logger = logging.getLogger('processor')
@@ -22,11 +23,12 @@ class Timer(object):
         logger.info(f'{self.name} elapsed: {elapsed}')
 
 class Processor:
-    def __init__(self, study_description=None):
-        self._study_description = study_description
+    def __init__(self, sender, study_description=None):
         self.pool = ThreadPoolExecutor(max_workers=1)
+        self._study_description = study_description
+        self._sender = sender
         pub.subscribe(self.listener, 'incoming')
-       
+
     def listener(self, path):
         logger.info(f'calling self.process with {path}')
         self.pool.submit(self.process, path)
@@ -51,8 +53,8 @@ class Processor:
                         if self._study_description:
                             logger.info(f'setting dicom study description to {self._study_description}')
                             ds.StudyDescription = self._study_description
-                        logger.info(f'publishing message to send topic with data set {member.name}')
-                        pub.sendMessage('send', ds=ds)
+                        logger.info(f'sending data set {member.name}')
+                        self._sender.send(ds)
                     except InvalidDicomError:
                         logger.debug(f'not dicom {member.name}')
                         pass

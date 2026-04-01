@@ -29,14 +29,21 @@ class Consumer:
         self._fire_on_existing()
         self._observer.start()
 
+    def stop(self):
+        logger.info('stopping watchdog observer')
+        self._observer.stop()
+
     def _fire_on_existing(self):
         for path in self._directory.iterdir():
             logger.info(f'dispatching event for existing file {path}')
             event = FileCreatedEvent(path)
             self._handler.dispatch(event)
 
-    def forever(self):
+    def run(self, forever=False):
+        logger.info('running consumer')
         self.start()
+        if not forever:
+            self.stop()
         self._observer.join()
 
 class DicomHandler(PatternMatchingEventHandler):

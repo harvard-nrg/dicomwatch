@@ -18,8 +18,9 @@ def main():
     parser.add_argument('--port', type=int, default=8104)
     parser.add_argument('--ae-title', default='MADRCCENTRAL')
     parser.add_argument('--study-description', type=str, default='MADRC')
-    parser.add_argument('-v', '--verbose', action='store_true')
     parser.add_argument('--folder', type=Path, default='/tmp/dicomwatch')
+    parser.add_argument('--forever', action='store_true')
+    parser.add_argument('-v', '--verbose', action='store_true')
     args = parser.parse_args()
 
     consumer = Consumer(args.folder)
@@ -29,15 +30,15 @@ def main():
         ae_title=args.ae_title
     )
     processor = Processor(
-        study_description=args.study_description
+        study_description=args.study_description,
+        sender=sender
     )
 
     if args.verbose:
-        logging.getLogger('processor').setLevel(logging.DEBUG)
         logging.getLogger('consumer').setLevel(logging.DEBUG)
-        logging.getLogger('sender').setLevel(logging.DEBUG)
-   
-    consumer.forever()
+        logging.getLogger('processor').setLevel(logging.DEBUG)
+
+    consumer.run(forever=args.forever)
 
 if __name__ == '__main__':
     main()
